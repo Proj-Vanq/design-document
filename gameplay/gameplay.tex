@@ -1,0 +1,288 @@
+\documentclass{scrartcl}
+
+\usepackage[T1]{fontenc}
+\usepackage{color}
+
+\title{Unvanquished Gameplay Roadmap}
+\author{Viech}
+\date{\today}
+
+\newcommand{\changefont}[3]
+{
+	\fontfamily{#1}
+	\fontseries{#2}
+	\fontshape{#3}
+	\selectfont
+}
+
+\definecolor{draft}    {rgb}{0.8, 0.3, 0.8}
+\definecolor{undecided}{rgb}{1.0, 0.5, 0.0}
+\definecolor{pending}  {rgb}{0.0, 0.5, 0.0}
+\definecolor{rejected} {rgb}{0.8, 0.1, 0.1}
+\definecolor{completed}{rgb}{0.1, 0.1, 0.5}
+
+\newcommand{\goal}     [0]{\textbf{\underline{Goal}\ }}
+
+\newcommand{\issue}    [0]{\textbf{\underline{Issue}\ }}
+\newcommand{\target}   [0]{\textbf{\underline{Target}\ }}
+\newcommand{\abstrac}  [0]{\textbf{\underline{Abstract}\ }}
+
+\newcommand{\draft}    [0]{\textcolor{draft}    {\textbf{[draft] }}}
+\newcommand{\undecided}[0]{\textcolor{undecided}{\textbf{[undecided] }}}
+\newcommand{\pending}  [0]{\textcolor{pending}  {\textbf{[pending] }}}
+\newcommand{\rejected} [0]{\textcolor{rejected} {\textbf{[rejected] }}}
+\newcommand{\completed}[0]{\textcolor{completed}{\textbf{[completed] }}}
+\newcommand{\accepted} [0]{\textcolor{completed}{\textbf{[accepted] }}}
+
+\newcommand{\example}  [0]{\textbf{\underline{Example}\ }}
+\newcommand{\amendment}[0]{\textbf{\underline{Amendment}\ }}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{4}
+\changefont{cmss}{m}{n}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+
+This document lists a number of my personal goals together with solutions that I would like to attempt. The purpose of this document is to help me organize my plans and to obtain feedback for them.
+
+Inside this document, first and second level entities are categories and goals, third level entitites describe issues or the target of a change and forth level entities represent solutions. Fifth level entities are reserved for examples and amendments.
+
+Solutions can have one of the following tags:
+
+\draft, \undecided, \pending, \rejected, \completed, \accepted
+
+\section{Core gameplay goals}
+
+\subsection{\goal Team progress}
+
+Team stages in Tremulous served the purpose of giving a match a number of phases. At the beginning of a match, the ability to extend the weak default base was guaranteed by the fact that access to strong weapons was restricted, even if individual players managed to gain a good amount of personal resources quickly. Higher stages offered new guns and shifted the gameplay from building towards destruction, even though stronger defense buildables dampened the effect a bit.
+
+Strictly speaking, it would have worked pretty well if stages were simply reached after a timer ran out but it was obviously more fun to reward teams for playing well, even if this introduced a slippery slope effect. The definition of "playing well" has already shifted with the introduction of confidence and we also started abusing the stage concept to punish passive gameplay by having teams stage down again. However, the basic concept of match phases remained intact.
+
+Manipulating a teams decisions by forcing them into a "soft" match phase is one of our most valuable tools to achieve a number of important goals. The most apparent ones are allowing base improvments/moves/forwards without artificially preventing the players from attacking the enemy early on as well as making sure a match ends with a winner by decreasing the matches stability with the introduction of devasting weapons in the late game. For that reason, I take the general concept of team progress as a given.
+
+\subsubsection{\issue Abrupt stage changes}
+
+One problem of the current stage system lies in the abruptness of stage traversions. For a number of items, we found that they are too powerful for one stage but should be available sooner than the next higher stage. This is especially problematic for items that are necessary to continue the team progress that would ultimately lead to reaching the next stage. As an example, the helmet is an item that should not be given to a human in the first minute of a match but as soon as the alien team has a number of dragoons they are able to lock the humans into their base, effectively preventing them from making the progress that would lead to the helmet being unlocked. While this specific problem certainly requires additional treatment that is outside the scope of the core gameplay, it illustrates the fact that having a low number of stages will lead to suboptimal decisions regarding the availability of an item.
+
+\paragraph{\undecided Dissipation of stages}
+
+The most obvious solution would be increasing the number of stages until all items are unlocked at an appropriate time. A more abstract and flexible way to do this is giving each item a confidence threshold of its own. Compared to  any fixed number of stages, this will greatly improve our development workflow since we can position items freely first and optionally group them into a fixed number of stages later on.
+
+As a first step I would remove stages and add the old stages' confidence thresholds to the config files of the relevant items. Instead of announcing a stage up/down, the fact that an item has been unlocked or locked would be announced to a team. The confidence reward/punishment for staging up/down would be replaced by (automatically) giving items a second threshold that is responsible for revoking access. The next step would be tweaking all those values individually as we see fit. The third step is optional: Items would be regrouped into a fixed number of stages with given thresholds. Alternatively this approach would allow for easy testing of a player generated item order (i.e. tech trees).
+
+\subsubsection{\issue Varying confidence thresholds}
+
+In the original confidence design, rewards, half life time and stage thresholds were all fixed and thus independent of time. As a result it was possible to stage down in late game which resulted in weak guns being used against a lot of (higher stage) defense buildables. The match would end in a tie eventually. This was fixed by giving stage thresholds a half life time, too. This works but having two independent nonlinear functions seems like unncessary complexity to me.
+
+\paragraph{\undecided Fixed thresholds, growing reference level}
+
+Confidence thresholds are fixed numbers but the reference level for the exponential function isn't constantly zero anymore but a linear function of the time and player count. Given the fact that teams usually earn confidence instead of losing it, it serves as a soft minimum for confidence at a given time. The confidence half life time can now be used to fine-tune the stability of the system: A low value increases the importance of time and decreases the impact of a teams actions. A higher value allows the teams to reach higher stages more quickly but won't compensate them if they don't manage to earn confidence.
+
+\subsubsection{\issue Unintuitive confidence ruleset}
+
+Confidence is supposed to measure the pace of a team and reward active gameplay. It should support a teams momentum but it should also favor a team that manages to push a stronger enemy back. Unfortunately, the amount of scenarios that require a special treatment for this to work properly is imense.
+
+\paragraph{\draft Improved visualization}
+
+Confidence rewards already create the impression of an arcade style score or RPG like experience system. While these are not our main genres, I see no point in ignoring their approaches on principle alone (it's not like we'd need to obscure the screen with flashing combo modifiers).
+
+Confidence events are displayed at the left side of the screen. Each has a container of its own, like this:
+\\\\
+\begin{tabular}{l}
+\hline
++15 Destroying defense structure\\
+Base value: 10\\
+Pushing back: +5\\
+72\% personal involvement\\
+\hline
+\end{tabular}
+\\\\\\
+A number of these entities can be displayed below each other, they will shift away upwards after a short time or if a new event arrives while the stack is full. Lines such as the third one represent modifiers of a confidence event. Examples:
+\\\\
+\begin{tabular}{l|l|l}
+	Name         & Value    & Description\\
+	\hline
+	Pushing back & Positive & The team didn't generate aggressive confidence for a while\\
+	Early strike & Negative & Killing structures early in the game\\
+	Undefended   & Negative & Killing undefended structures\\
+	Spamming     & Negative & Building in an area with a lot of structures\\
+	Risky        & Positive & Building outside the friendly base\\
+	Bold         & Positive & Building close to the enemy base\\
+	Defending    & Negative & Killing an enemy inside the friendly base\\
+	Attacking    & Positive & Killing an enemy inside the enemy base\\
+\end{tabular}
+\\\\\\
+These modifiers are either fixed boni or actual modifiers applied to the base value. Only the resulting deltas are displayed in either case. Personal involvement is the amount of work that has been done by the player that receives the message. Values below a threshold don't result in a message.
+
+\subsection{\goal Stability}
+
+Ideally a match is stable in the beginning but gets increasingly instable over the course of time, so that equally strong teams are having long lasting and close matches that lead to a winner eventually.
+
+\subsubsection{\abstrac Design rules}
+
+\paragraph{\undecided Firepower and countermeasures}
+
+For simplicity, weapons and their relevant countermeasures should be unlocked at roughly the same threshold (e.g. grenade and trapper), so teams equal in strength and progress are able to counter each others attacks. However, higher level firepower should become increasingly more powerful than the relevant defense, to the point where no appropriate countermeasure exists.
+
+\paragraph{\undecided Base size/strength relation}
+
+In relation to the number of buildables, big bases are easier to destroy than small ones, which is accomplished through the behaviour of weapons and defense structures:
+
+\begin{itemize}
+\item Some weapons come with an area of effect and can do more damage when used against a number of close structures. Weapons that are unlocked later in the game have a higher affinity for this feature.
+\item Effects that slow down enemies or reduce their ability to fight in a similiar way don't stack.
+\item Healing effects and buffs provided by structures to either friendly players or structures don't stack.
+\end{itemize}
+
+\section{Core gameplay goals for scrims}
+
+This section lists goals specific to matches with small coordinated teams. My leitmotif is allowing teams to execute diverse and dynamic strategies by decreasing the magnitude of related risks. Diversity of strategies and the ability to adjust a strategy during a match will lead to fun and interesting matches without increasing the complexity of the gameplay mechanics as such.
+
+\subsection{\goal Forwarding and moving base}
+
+Forwards and base moves increase the diversity of competitive matches, especially if a number of viable locations is available to both teams. While maps have to offer spots that are suitable for building and give the team that holds them a greater amount of map control, the gamelogic is responsible for keeping the risks involved at an appropriate level. Because of the positive impact on diversity, I find it acceptable to have the advantage of both strategies outweight the associated risks. Failing to move base or build a forward removes building resources and gives the enemy time to execute any qstrategy without interruption (since the forwarding team is on defense during the process), so additional risks and punishments should be kept low.
+
+\subsubsection{\issue Main base safety}
+
+Losing your main base while you are busy building elsewhere has a significant impact on the stability of a match. Not only is the potentially weak forward now the only place for the team to respawn and operate from, but they are also losing the marked build points and, since the introduction of confidence, have to face an enemy with strong equipment, since killing the old base yields an enormous amount of confidence. I find this is one of the strongest drawbacks of the confidence system. Currently, I can't think of a better way to handle stages, so I will focus on mitigating this specific scenario for now. But even if we move away from confidence at some point, the harm in losing ones main base during out-of-base building is still so big that it will prevent a lot of interesting moves, so the following solutions are more than just hotfixes to the confidence system.
+
+\paragraph{\undecided Base attack warnings}
+
+In a public match, there is almost always a player near the main base hwo can defend it and warn teammates in case of an attack. The warning messages spammed by the defense computer are inprecise and get ignored most of the time. In a scrim, having a defense computer in the main base can save the day, but even if it was available at the beginning of the match it would still require time and resources to build and slow both the team and the match down. A base attack notification should be available all the time, since it only favors an aggressive/active team, while teams who camp or leave a defender in base will already know about attacks. Not requiring a defender will make the game more fun for the player in question and give the forward/base move a higher chance of succeeding.
+
+Here is my solution in short:
+
+\begin{itemize}
+\item Overmind and reactor issue their first warning at 75\% life and their second warning at 25\%. A third warning is issued when the structure is killed. There's really no point in not giving a team that information, it will either lead to constant checks ("Can I evovle?", "Can I place an egg?", "Does that structure still have power?") or to frustration. Losing the main buildable is critical enough so I see no point in keeping that information secret. Giving a warning on the first scratch was often annoying in pubs and misleading in scrims. It would also be unintuitive if it was a bad thing to hit the main buildable with a graze shot.
+\item The reactor and repeater inform their team when a structure in their range dies. This allows a sneaky attacker to kill atleast one structure but allows the humans to react before the match gets decided by one lucky attack without any struggle. Giving the repeater the same ability ensures some protection for bigger forwards. (Story explaination: Reactor and repeater notice the voltage peak when the structure stops drawing power, similiar to an RFID reader.)
+\item The overmind informs the aliens when a structure in its range dies. Aliens don't get a message for structures that die in forwards though. The aliens greater mobility and ability to spam structures should be compensated by a slightly higher risk of losing control.
+\item All warnings contain information about the location of the event (room name; in order to increase coordination in public games).
+\item The warning of the defense computer is removed.
+\end{itemize}
+
+\paragraph{\undecided Remote deconstruction}
+
+Builders that are in the process of forwarding or moving base are able to deconstruct or destroy the main base remotely to prevent the structures from falling into enemy hands. The ability to veto this decision is given to all teammates for a short period. After that buildables either deconstruct over time (dretches can hurt them) or they simply blow up, not returning build points but not decreasing confidenced either. There are two targets to chose from: The main base area (anything in range of the main buildable and anything that depends on the buildables in range) or all marked structures. The main buildables are always unaffected. They will automatically get marked when the feature is used against the main base though. Sanity checks will ensure that the feature can only be used when a number of critical structures survives the process.
+
+\section{Core gameplay goals for public matches}
+
+This section lists goals specifc to matches where the players of a team didn't prepare a common strategy and don't use external means of communication such as VOIP. Since I desire a good amount of strategy and coordinated gameplay even under these circumstances, most of the solutions are centered around the idea of having the game support the client's communication.
+
+\subsection{\goal Passive team coordination}
+
+Facilitating player communication is one thing, but giving players a good amount of information at a glance will ensure the communication channels stay free for higher level plans.
+
+\subsubsection{\target Minimap}
+
+The minimap can already support the process of grouping up with teammates since it displays friendly players in range, but there is a lot more it can do to increase the amount of team coordination.
+
+\paragraph{\undecided Necessary refactorings}
+
+Entities that are not sent to the client but should still show up on the minimap can be represented by a new entity type. The amount of information stored inside such an entity can be a subset of the state of the entity in question (e.g. it might be unwise to transmit the health of remote friendly structures).
+
+\paragraph{\undecided Displaying friendly players and buildables}
+
+Friendly players in reach are already displayed, but in a public game players will often want to know where on the big map all the fun is happening. Base moves and rushes will also be a lot more coordinated if teammates know where the relevant base is at. All friendly units should show up on the minimap, regardless of distance.
+
+\paragraph{\undecided Displaying enemy players and buildables}
+
+The minimap should display all enemies that are already visible on the human radar or alien sense. This is simply a matter of intuitive design. Going one step further, it might make sense to also display what all your teammates see. For the human team, this would make the radar even more of a teamplay item. For the aliens, hwo all have the ability to sense enemies, this should not make a big difference except for being informed about combat situations and learning about the spots that are frequented by enemies.
+
+\paragraph{\undecided Marking locations}
+
+Placing an "attack here" or "defend this location" marker on your teammates minimap (and possibly HUD) is much more convenient than using chat and naming the relevant room name. This is one of those typical commander mode features that don't really require a dedicated commander, which makes it perfectly suited for our decentralized real time strategy approach.
+
+\section{Balancing}
+
+This section is about changes that aim to improve balance between the teams by adjusting the attributes or availability of classes, items and buildables.
+
+\subsection{\goal Unsorted}
+
+Anything that isn't targeted at a more specific balance problem goes in here.
+
+\subsubsection{\issue Human armor}
+
+Humans without a helmet can be locked into their base by dragoons and they will often find it a waste of credits to buy stronger weapons if they are facing enemies that can kill them with a single hit. On the other hand, the helmet is too strong against dretches to be available early on. The light armor serves as a protection against unexperienced players who pounce with the goon or hit the legs with the dretch but its value gets increasingly smaller when the enemy is more skilled and aims for the head.
+
+\paragraph{\undecided Armor reform, radar changes}
+
+Helmet and light armor models are used for a single item, also called "light armor". The new light armor's body protection is slightly lower than that of the old light armor, the head protection is lower than that of the old helmet: The carrier survives a single goon headchomp. The price of the new light armor is either equal to or slightly higher than the dretch credit value, so something around 200 credits. (I would set it to 200 for now and consider raising the dretch value to 200 when it gets the pounce ability.) A "medium armor" is added. The head protection level is roughly that of the old helmet, the body protection is slightly higher than that of the old light armor. The price is between that of the light armor and the battlesuit, so something around 300 credits. The battlesuit remains unchanged in ability and price and fills the niche of a heavy armor. Thanks to ddos for the idea.
+
+The radar isn't part of the head protection anymore. It is a seperate item with a price of its own. This will lead to less frequent usage, which is good because it allows aliens to make better use of their stealth abilities. Because of the seperate cost, there is no need to limit its ability like it was done when it was a side effect of the obligatory helmet. The old radar's visualization can make room for a space shooter style in-sight display of target recticles that display additional information such as enemy health. This will not only make the radar more fun to use but it will also increase its teamplay value, since the player hwo carries it can announce targets based on this knowledge. The radar, like any other item, should be visible on the human model, so it might make sense to make it back-mounted (that would prevent mounting it on a battlesuit though, which I don't find necessary but acceptable, the greater problem may or may not arise from the fact that the radar can't be used together with the jetpack that way, which will make egghunting harder on certain maps). I imagine the radar price to be somewhere around 100 credits.
+
+\subsection{\goal Dretches vs. human main base}
+
+To an extend, dretches should be able to harm camping players, since they can't attack any structures and need the kills to evolve into a camp-breaking form. On the other hand, mindless and continuous dretch rushing is a zero-cost and relatively boring strategy that seems to work too well against early human bases: Together with their ability to attack structures in construction, waves of dretches are not only annoying but they can also inhibit human progress by disrupting their attempts to make the base strong enough to savely leave it for a counterstrike. During an attack of higher alien classes, the disorienting effect of dretches roaming inside the human base will make the attack signifcantly stronger, which isn't really true for human attacks that are supported by naked rifles.
+
+\subsubsection{\issue Defense structures}
+
+The machine gun turret is strong against slow targets and at high distance. Its effect against dretches that harass players inside the base is just mediocre. Given the fact that human base diversity suffers under the availability of only a single defense structure until late game, adding additional turrets with a different semantic seems like a good idea.
+
+\paragraph{\undecided Rocket pod}
+
+The rocket pod is a structure similiar in size and price to the turret. It fires small unguided (or just slightly guided) missiles that kill a dretch on hit. The damage per second is significantly below that of the turret but its reach is a lot higher. Mssiles can be dodged when fired from some distance but at a low distance, dodging gets increasingly harder, even for small aliens. The delay between a line of sight and firing a shot is directly linked to the turning time of the turrets head and thus low (there is no or just a neglible additional spinup time). Thanks to Norfenstein for the idea.
+
+\section{Visions}
+
+This section contains ideas that don't fix or improve a situation but end in themselves. Balance is irrelevant for their initial design, the key concept is increasing fun or simply trying something new.
+
+\subsection{\goal New alien classes}
+
+Compared to the arsenal of the human team, the degree of diversity on alien side is rather low. There's a lot of potential for innovation and fun when it comes to designing new aliens.
+
+\subsubsection{\target Flying class}
+
+\paragraph{\draft Vulture}
+\label{vulture}
+
+\subsubsection{\target Basilisk redesign}
+
+\paragraph{\draft "Paralisk" (Codename)}
+\label{paralisk}
+
+\subsubsection{\target Suicide class}
+\label{suicide-class}
+
+A suicide class was an often requested feature. Looking at the way how players use the human grenade in kamikaze manner, it seems like such an ability could be a lot of fun for the aliens, too. While we shouldn't promote mindless attacks that convert personal credits into reliable damage, we can still have this ability if it's either expensive and comes with a risk of not hitting its target (similiar to the grenade) or has a low intensity that limits it to a support attack (less fun but easier to balance).
+
+See \ref{flexible-upgrades} for a solution.
+
+\subsection{\goal Alien class structure}
+
+While the human team has a very flexible slot system for equipment, aliens can only chose from a number of predefined classes. A different handling of upgrades helps with the general goal of having two very unlike teams face each other but it would certainly be nice if aliens had a comparable amount of freedom of choice.
+
+\subsubsection{\target Evolving and advanced forms}
+
+Non-advanced forms are often refered to as "less awesome" variants of the advanced classes. The fact that advanced aliens are treated as if they were different species (they show up next to the normal version in the evolve dialog) supports this impression. Rules for evolving are as arbitrary and unintuitive as the hierarchy that exists between the classes. Not much speaks against a redesign.
+
+\paragraph{\undecided Flexible upgrades}
+\label{flexible-upgrades}
+
+The non-advanced versions are the new base classes that dretch and granger can evolve into as long as they are on creep\footnote{Deliberately increasing the alien's dependency on their base and decreasing their speed and map control ability, since the distance to the enemy base has to be covered as the attack class.}. Evolving between base classes isn't possible anymore\footnote{This is a first step away from ordering classes in a hierarchy. Evos earned after being forced to use a cheaper class can be spent on upgrades as opposed to just using the class as a steppingstone.} but base classes can be upgraded for evos with a number of perks that are available to multiple classes. Perks get unlocked when the team progresses, just like stronger base classes. Their effect and price can vary per class.
+
+Here are the perks that I'd implement for a start:
+
+\begin{itemize}
+\item Strength. Works like evolving into an advanced class but without giving a special ability. Strength can be applied to all classes and combined with any other perk and will increase values such as health, damage, jump magnitude and attack rate. However, strength will increase the hitbox and model size of an alien. It gets unlocked early and is cheap (one evo for most classes).
+\item Electricity. Adds a low range ablity that is most efficient for attacking groups of humans or buildables. The marauder will get its zap attack. The basilisk will get the power-drawing bomb that I planned for its advanced version (see \ref{paralisk}).
+\item Spikes. Adds a directed, ranged attack with a low or no area of effect, such as the snipe attack of the old advanced goon.
+\item Fragmentation. Adds an undirected or imprecise attack with high damage output and risk of hurting teammates or friendly structures. The dretch gets a suicide attack (cf. \ref{suicide-class}).
+\end{itemize}
+
+All perks apart from strength (which already increases the model size) result in a texture change. It might make sense to just blend some color on the diffuse map as opposed to creating different textures for each possible combination of perks.
+
+Speaking of combinations, the idea is to think of a fitting ability for each class/perk combination first. Once a class has access to two special abilities, a decisions has to be made whether the two exclude each other, can be acquired independently or, preferably, can be forged into a single combined ability.
+
+Thanks to Norfenstein for the idea.
+
+\subparagraph{\example Perk combination}
+
+The vulture (cf. \ref{vulture}) could get a paralizing area effect bomb with the electricity perk, a small explosive bomb with the fragmentation skill or it could spit a needle as the spikes ability. Spikes and electricity could be combined to a directed thunderbolt and spikes and fragmentation would result in a projectile that explodes on impact.
+
+\end{document}
