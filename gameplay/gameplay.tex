@@ -70,7 +70,7 @@ Manipulating a teams decisions by forcing them into a "soft" match phase is one 
 
 One problem of the current stage system lies in the abruptness of stage traversions. For a number of items, we found that they are too powerful for one stage but should be available sooner than the next higher stage. This is especially problematic for items that are necessary to continue the team progress that would ultimately lead to reaching the next stage. As an example, the helmet is an item that should not be given to a human in the first minute of a match but as soon as the alien team has a number of dragoons they are able to lock the humans into their base, effectively preventing them from making the progress that would lead to the helmet being unlocked. While this specific problem certainly requires additional treatment that is outside the scope of the core gameplay, it illustrates the fact that having a low number of stages will lead to suboptimal decisions regarding the availability of an item.
 
-\paragraph{\undecided Dissipation of stages}
+\paragraph{\pending Dissipation of stages}
 
 The most obvious solution would be increasing the number of stages until all items are unlocked at an appropriate time. A more abstract and flexible way to do this is giving each item a confidence threshold of its own. Compared to  any fixed number of stages, this will greatly improve our development workflow since we can position items freely first and optionally group them into a fixed number of stages later on.
 
@@ -126,11 +126,11 @@ Ideally a match is stable in the beginning but gets increasingly instable over t
 
 \subsubsection{\abstrac Design rules}
 
-\paragraph{\undecided Firepower and countermeasures}
+\paragraph{\accepted Firepower and countermeasures}
 
 For simplicity, weapons and their relevant countermeasures should be unlocked at roughly the same threshold (e.g. grenade and trapper), so teams equal in strength and progress are able to counter each others attacks. However, higher level firepower should become increasingly more powerful than the relevant defense, to the point where no appropriate countermeasure exists.
 
-\paragraph{\undecided Base size/strength relation}
+\paragraph{\accepted Base size/strength relation}
 
 In relation to the number of buildables, big bases are easier to destroy than small ones, which is accomplished through the behaviour of weapons and defense structures:
 
@@ -152,7 +152,7 @@ Forwards and base moves increase the diversity of competitive matches, especiall
 
 Losing your main base while you are busy building elsewhere has a significant impact on the stability of a match. Not only is the potentially weak forward now the only place for the team to respawn and operate from, but they are also losing the marked build points and, since the introduction of confidence, have to face an enemy with strong equipment, since killing the old base yields an enormous amount of confidence. I find this is one of the strongest drawbacks of the confidence system. Currently, I can't think of a better way to handle stages, so I will focus on mitigating this specific scenario for now. But even if we move away from confidence at some point, the harm in losing one's main base during out-of-base building is still so big that it will prevent a lot of interesting moves, so the following solutions are more than just hotfixes to the confidence system.
 
-\paragraph{\undecided Base attack warnings}
+\paragraph{\pending Base attack warnings}
 
 In a public match, there is almost always a player near the main base who can defend it and warn teammates in case of an attack. The warning messages spammed by the defense computer are inprecise and get ignored most of the time. In a scrim, having a defense computer in the main base can save the day, but even if it was available at the beginning of the match it would still require time and resources to build and slow both the team and the match down. A base attack notification should be available all the time, since it only favors an aggressive/active team, while teams who camp or leave a defender in base will already know about attacks. Not requiring a defender will make the game more fun for the player in question and give the forward/base move a higher chance of succeeding.
 
@@ -182,11 +182,11 @@ Facilitating player communication is one thing, but giving players a good amount
 
 The minimap can already support the process of grouping up with teammates since it displays friendly players in range, but there is a lot more it can do to increase the amount of team coordination.
 
-\paragraph{\undecided Necessary refactorings}
+\paragraph{\pending Necessary refactorings}
 
 Entities that are not sent to the client but should still show up on the minimap can be represented by a new entity type. The amount of information stored inside such an entity can be a subset of the state of the entity in question (e.g. it might be unwise to transmit the health of remote friendly structures).
 
-\paragraph{\undecided Displaying friendly players and buildables}
+\paragraph{\pending Displaying friendly players and buildables}
 
 Friendly players in reach are already displayed, but in a public game players will often want to know where on the big map all the fun is happening. Base moves and rushes will also be a lot more coordinated if teammates know where the relevant base is at. All friendly units should show up on the minimap, regardless of distance.
 
@@ -194,7 +194,7 @@ Friendly players in reach are already displayed, but in a public game players wi
 
 The minimap should display all enemies that are already visible on the human radar or alien sense. This is simply a matter of intuitive design. Going one step further, it might make sense to also display what all your teammates see. For the human team, this would make the radar even more of a teamplay item. For the aliens, who all have the ability to sense enemies, this should not make a big difference except for being informed about combat situations and learning about the spots that are frequented by enemies.
 
-\paragraph{\undecided Marking locations}
+\paragraph{\pending Marking locations}
 
 Placing an "attack here" or "defend this location" marker on your teammates minimap (and possibly HUD) is much more convenient than using chat and naming the relevant room name. This is one of those typical commander mode features that don't really require a dedicated commander, which makes it perfectly suited for our decentralized real time strategy approach.
 
@@ -210,9 +210,11 @@ Anything that isn't targeted at a more specific balance problem goes in here.
 
 Humans without a helmet can be locked into their base by dragoons and they will often find it a waste of credits to buy stronger weapons if they are facing enemies that can kill them with a single hit. On the other hand, the helmet is too strong against dretches to be available early on. The light armor serves as a protection against unexperienced players who pounce with the goon or hit the legs with the dretch but its value gets increasingly smaller when the enemy is more skilled and aims for the head.
 
-\paragraph{\undecided Armor reform, radar changes}
+\paragraph{\pending Armor reform}
 
 Helmet and light armor models are used for a single item, also called "light armor". The new light armor's body protection is slightly lower than that of the old light armor, the head protection is lower than that of the old helmet: The carrier survives a single goon headchomp. The price of the new light armor is either equal to or slightly higher than the dretch credit value, so something around 200 credits. (I would set it to 200 for now and consider raising the dretch value to 200 when it gets the pounce ability.) A "medium armor" is added. The head protection level is roughly that of the old helmet, the body protection is slightly higher than that of the old light armor. The price is between that of the light armor and the battlesuit, so something around 300 credits. The battlesuit remains unchanged in ability and price and fills the niche of a heavy armor. Thanks to ddos for the idea.
+
+\paragraph{\undecided Radar changes}
 
 The radar isn't part of the head protection anymore. It is a seperate item with a price of its own. This will lead to less frequent usage, which is good because it allows aliens to make better use of their stealth abilities. Because of the seperate cost, there is no need to limit its ability like it was done when it was a side effect of the obligatory helmet. The old radar's visualization can make room for a space shooter style in-sight display of target recticles that display additional information such as enemy health. This will not only make the radar more fun to use but it will also increase its teamplay value, since the player who carries it can announce targets based on this knowledge. The radar, like any other item, should be visible on the human model, so it might make sense to make it back-mounted (that would prevent mounting it on a battlesuit though, which I don't find necessary but acceptable, the greater problem may or may not arise from the fact that the radar can't be used together with the jetpack that way, which will make egghunting harder on certain maps). I imagine the radar price to be somewhere around 100 credits.
 
@@ -224,7 +226,7 @@ To an extent, dretches should be able to harm camping players, since they can't 
 
 The machine gun turret is strong against slow targets and at high distance. Its effect against dretches that harass players inside the base is just mediocre. Given the fact that human base diversity suffers under the availability of only a single defense structure until late game, adding additional turrets with a different semantic seems like a good idea.
 
-\paragraph{\undecided Rocket pod}
+\paragraph{\pending Rocket pod}
 
 The rocket pod is a structure similiar in size and price to the turret. It fires small unguided (or just slightly guided) missiles that kill a dretch on hit. The damage per second is significantly below that of the turret but its reach is a lot higher. Mssiles can be dodged when fired from some distance but at a low distance, dodging gets increasingly harder, even for small aliens. The delay between a line of sight and firing a shot is directly linked to the turning time of the turrets head and thus low (there is no or just a neglible additional spinup time). Thanks to Norfenstein for the idea.
 
@@ -261,7 +263,7 @@ While the human team has a very flexible slot system for equipment, aliens can o
 
 Non-advanced forms are often refered to as "less awesome" variants of the advanced classes. The fact that advanced aliens are treated as if they were different species (they show up next to the normal version in the evolve dialog) supports this impression. Rules for evolving are as arbitrary and unintuitive as the hierarchy that exists between the classes. Not much speaks against a redesign.
 
-\paragraph{\undecided Flexible upgrades}
+\paragraph{\pending Flexible upgrades}
 \label{flexible-upgrades}
 
 The non-advanced versions are the new base classes that dretch and granger can evolve into as long as they are on creep\footnote{Deliberately increasing the alien's dependency on their base and decreasing their speed and map control ability, since the distance to the enemy base has to be covered as the attack class.}. Evolving between base classes isn't possible anymore\footnote{This is a first step away from ordering classes in a hierarchy. Evos earned after being forced to use a cheaper class can be spent on upgrades as opposed to just using the class as a steppingstone.} but base classes can be upgraded for evos with a number of perks that are available to multiple classes. Perks get unlocked when the team progresses, just like stronger base classes. Their effect and price can vary per class.
@@ -284,5 +286,9 @@ Thanks to Norfenstein for the idea.
 \subparagraph{\example Perk combination}
 
 The vulture (cf. \ref{vulture}) could get a paralyzing area effect bomb with the electricity perk, a small explosive bomb with the fragmentation skill or it could spit a needle as the spikes ability. Spikes and electricity could be combined to a directed thunderbolt and spikes and fragmentation would result in a projectile that explodes on impact.
+
+\subparagraph{\amendment Status change to \pending}
+
+A greater amount of hierarchy between the base classes is maintained by allowing evolving to a more expensive one. Perks of the old class are removed and their cost may or may not be refunded in the form of a price reduction.
 
 \end{document}
