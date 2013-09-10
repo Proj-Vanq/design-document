@@ -70,11 +70,15 @@ Manipulating a teams decisions by forcing them into a "soft" match phase is one 
 
 One problem of the current stage system lies in the abruptness of stage traversions. For a number of items, we found that they are too powerful for one stage but should be available sooner than the next higher stage. This is especially problematic for items that are necessary to continue the team progress that would ultimately lead to reaching the next stage. As an example, the helmet is an item that should not be given to a human in the first minute of a match but as soon as the alien team has a number of dragoons they are able to lock the humans into their base, effectively preventing them from making the progress that would lead to the helmet being unlocked. While this specific problem certainly requires additional treatment that is outside the scope of the core gameplay, it illustrates the fact that having a low number of stages will lead to suboptimal decisions regarding the availability of an item.
 
-\paragraph{\pending Dissipation of stages}
+\paragraph{\completed Dissipation of stages}
 
 The most obvious solution would be increasing the number of stages until all items are unlocked at an appropriate time. A more abstract and flexible way to do this is giving each item a confidence threshold of its own. Compared to  any fixed number of stages, this will greatly improve our development workflow since we can position items freely first and optionally group them into a fixed number of stages later on.
 
 As a first step I would remove stages and add the old stages' confidence thresholds to the config files of the relevant items. Instead of announcing a stage up/down, the fact that an item has been unlocked or locked would be announced to a team. The confidence reward/punishment for staging up/down would be replaced by (automatically) giving items a second threshold that is responsible for revoking access. The next step would be tweaking all those values individually as we see fit. The third step is optional: Items would be regrouped into a fixed number of stages with given thresholds. Alternatively this approach would allow for easy testing of a player generated item order (i.e. tech trees).
+
+\subparagraph{\amendment Status change to \completed}
+
+The implementation (first step) is done. The next step (value tweaking) will be a continuous process. The third step has yet to be decided upon.
 
 \subsubsection{\issue Varying confidence thresholds}
 
@@ -88,13 +92,14 @@ Confidence thresholds are fixed numbers but the reference level for the exponent
 
 Confidence is supposed to measure the pace of a team and reward active gameplay. It should support a teams momentum but it should also favor a team that manages to push a stronger enemy back. Unfortunately, the amount of scenarios that require a special treatment for this to work properly is immense.
 
-\paragraph{\draft Improved visualization}
+\paragraph{\rejected Detailed visualization}
+\label{detailed-visualization}
 
 Confidence rewards already create the impression of an arcade style score or RPG like experience system. While these are not our main genres, I see no point in ignoring their approaches on principle alone (it's not like we'd need to obscure the screen with flashing combo modifiers).
 
 Confidence events are displayed at the left side of the screen. Each has a container of its own, like this:
 \\\\
-\begin{tabular}{l}
+\begin{tabular}{|l|}
 \hline
 +15 Destroying defense structure\\
 Base value: 10\\
@@ -120,6 +125,24 @@ A number of these entities can be displayed below each other, they will shift aw
 \\\\\\
 These modifiers are either fixed boni or actual modifiers applied to the base value. Only the resulting deltas are displayed in either case. Personal involvement is the amount of work that has been done by the player that receives the message. Values below a threshold don't result in a message.
 
+\subparagraph{\amendment Status change to \rejected}
+
+Instead of keeping the confidence modifiers simple and showing them to players, we decided to make them as complex as necessary to be intuitive. We will hide the complexity behind a graphical display (see \ref{intuitive-visualization}). The name of \ref{detailed-visualization} has been changed from "Improved visualization" to "Detailed visualization".
+
+\paragraph{\completed Intuitive visualization}
+\label{intuitive-visualization}
+
+Details of the confidence system are not displayed to the player. Confidence is shown as a progress bar with markers for relevant thresholds on it. If a player is responsible for earning or losing confidence, the relevant part glows.
+
+This form of visualization can hide a more complex confidence model. The goal is to make the size of rewards feel intuitive with respect to a given promoted behaviour (e.g. proactive and risky play; see \ref{complex-but-intuitive-ruleset}).
+
+\paragraph{\pending Complex but intuitive ruleset}
+\label{complex-but-intuitive-ruleset}
+
+Confidence rules are reworked to reward basic notions of progress (building, destroying, killing) but the size of rewards will also depend on modifiers that are based on attendent circumstances. Proactive and risky play will yield a higher modifier, since proactive play asks for the player's creativity and leads to a higher degree of match diversity (see \ref{core-gameplay-goals-for-scrims}) while risky play has a chance to increase match stability (when the inherent penalty for failing is moderate for the weak team but higher for the leading team) and will increase the challenge level for skilled players, leading to flow.
+
+The precise ruleset will be developed during implementation and testing.
+
 \subsection{\goal Stability}
 
 Ideally a match is stable in the beginning but gets increasingly instable over the course of time, so that equally strong teams are having long lasting and close matches that lead to a winner eventually.
@@ -141,6 +164,7 @@ In relation to the number of buildables, big bases are easier to destroy than sm
 \end{itemize}
 
 \section{Core gameplay goals for scrims}
+\label{core-gameplay-goals-for-scrims}
 
 This section lists goals specific to matches with small coordinated teams. My leitmotif is allowing teams to execute diverse and dynamic strategies by decreasing the magnitude of related risks. Diversity of strategies and the ability to adjust a strategy during a match will lead to fun and interesting matches without increasing the complexity of the gameplay mechanics as such.
 
