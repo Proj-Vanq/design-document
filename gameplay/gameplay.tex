@@ -74,7 +74,7 @@ One problem of the current stage system lies in the abruptness of stage traversi
 
 The most obvious solution would be increasing the number of stages until all items are unlocked at an appropriate time. A more abstract and flexible way to do this is giving each item a confidence threshold of its own. Compared to  any fixed number of stages, this will greatly improve our development workflow since we can position items freely first and optionally group them into a fixed number of stages later on.
 
-As a first step I would remove stages and add the old stages' confidence thresholds to the config files of the relevant items. Instead of announcing a stage up/down, the fact that an item has been unlocked or locked would be announced to a team. The confidence reward/punishment for staging up/down would be replaced by (automatically) giving items a second threshold that is responsible for revoking access. The next step would be tweaking all those values individually as we see fit. The third step is optional: Items would be regrouped into a fixed number of stages with given thresholds. Alternatively this approach would allow for easy testing of a player generated item order (i.e. tech trees).
+As a first step I would remove stages and add the old stages' confidence thresholds to the config files of the relevant items. Instead of announcing a stage up/down, the fact that an item has been unlocked or locked would be announced to a team. The confidence reward/punishment for staging up/down would be replaced by (automatically) giving items a second threshold that is responsible for revoking access. The next step would be tweaking all those values individually as we fit. The third step is optional: Items would be regrouped into a fixed number of stages with given thresholds. Alternatively this approach would allow for easy testing of a player generated item order (i.e. tech trees).
 
 \subparagraph{\amendment Status change to \completed}
 
@@ -84,9 +84,13 @@ The implementation (first step) is done. The next step (value tweaking) will be 
 
 In the original confidence design, rewards, half life time and stage thresholds were all fixed and thus independent of time. As a result it was possible to stage down in late game which resulted in weak guns being used against a lot of (higher stage) defense buildables. The match would end in a tie eventually. This was fixed by giving stage thresholds a half life time, too. This works but having two independent nonlinear functions seems like unncessary complexity to me.
 
-\paragraph{\undecided Fixed thresholds, growing reference level}
+\paragraph{\rejected Fixed thresholds, growing reference level}
 
 Confidence thresholds are fixed numbers but the reference level for the exponential function isn't constantly zero anymore but a linear function of the time and player count. Given the fact that teams usually earn confidence instead of losing it, it serves as a soft minimum for confidence at a given time. The confidence half life time can now be used to fine-tune the stability of the system: A low value increases the importance of time and decreases the impact of a teams actions. A higher value allows the teams to reach higher stages more quickly but won't compensate them if they don't manage to earn confidence.
+
+\subparagraph{\amendment Status change to \rejected}
+
+We decided to keep thresholds fixed and the decay mechanic simple. Most of the confidence system's complexity is now represented by confidence gain modifiers.
 
 \subsubsection{\issue Unintuitive confidence ruleset}
 
@@ -95,7 +99,7 @@ Confidence is supposed to measure the pace of a team and reward active gameplay.
 \paragraph{\rejected Detailed visualization}
 \label{detailed-visualization}
 
-Confidence rewards already create the impression of an arcade style score or RPG like experience system. While these are not our main genres, I see no point in ignoring their approaches on principle alone (it's not like we'd need to obscure the screen with flashing combo modifiers).
+Confidence rewards already create the impression of an arcade style score or RPG like experience system. While these are not our main genres, I no point in ignoring their approaches on principle alone (it's not like we'd need to obscure the screen with flashing combo modifiers).
 
 Confidence events are displayed at the left side of the screen. Each has a container of its own, like this:
 \\\\
@@ -127,19 +131,19 @@ These modifiers are either fixed boni or actual modifiers applied to the base va
 
 \subparagraph{\amendment Status change to \rejected}
 
-Instead of keeping the confidence modifiers simple and showing them to players, we decided to make them as complex as necessary to be intuitive. We will hide the complexity behind a graphical display (see \ref{intuitive-visualization}). The name of \ref{detailed-visualization} has been changed from "Improved visualization" to "Detailed visualization".
+Instead of keeping the confidence modifiers simple and showing them to players, we decided to make them as complex as necessary to be intuitive. We will hide the complexity behind a graphical display (\ref{intuitive-visualization}). The name of \ref{detailed-visualization} has been changed from "Improved visualization" to "Detailed visualization".
 
 \paragraph{\completed Intuitive visualization}
 \label{intuitive-visualization}
 
 Details of the confidence system are not displayed to the player. Confidence is shown as a progress bar with markers for relevant thresholds on it. If a player is responsible for earning or losing confidence, the relevant part glows.
 
-This form of visualization can hide a more complex confidence model. The goal is to make the size of rewards feel intuitive with respect to a given promoted behaviour (e.g. proactive and risky play; see \ref{complex-but-intuitive-ruleset}).
+This form of visualization can hide a more complex confidence model. The goal is to make the size of rewards feel intuitive with respect to a given promoted behaviour (e.g. proactive and risky play; \ref{complex-but-intuitive-ruleset}).
 
 \paragraph{\pending Complex but intuitive ruleset}
 \label{complex-but-intuitive-ruleset}
 
-Confidence rules are reworked to reward basic notions of progress (building, destroying, killing) but the size of rewards will also depend on modifiers that are based on attendent circumstances. Proactive and risky play will yield a higher modifier, since proactive play asks for the player's creativity and leads to a higher degree of match diversity (see \ref{core-gameplay-goals-for-scrims}) while risky play has a chance to increase match stability (when the inherent penalty for failing is moderate for the weak team but higher for the leading team) and will increase the challenge level for skilled players, leading to flow.
+Confidence rules are reworked to reward basic notions of progress (building, destroying, killing) but the size of rewards will also depend on modifiers that are based on attendent circumstances. Proactive and risky play will yield a higher modifier, since proactive play asks for the player's creativity and leads to a higher degree of match diversity (\ref{core-gameplay-goals-for-scrims}) while risky play has a chance to increase match stability (when the inherent penalty for failing is moderate for the weak team but higher for the leading team) and will increase the challenge level for skilled players, leading to flow.
 
 The precise ruleset will be developed during implementation and testing.
 
@@ -183,7 +187,7 @@ In a public match, there is almost always a player near the main base who can de
 Here is my solution in short:
 
 \begin{itemize}
-\item Overmind and reactor issue their first warning at 75\% life and their second warning at 25\%. A third warning is issued when the structure is killed. There's really no point in not giving a team that information, it will either lead to constant checks ("Can I evolve?", "Can I place an egg?", "Does that structure still have power?") or to frustration. Losing the main buildable is critical enough so I see no point in keeping that information secret. Giving a warning on the first scratch was often annoying in pubs and misleading in scrims. It would also be unintuitive if it was a bad thing to hit the main buildable with a graze shot.
+\item Overmind and reactor issue their first warning at 75\% life and their second warning at 25\%. A third warning is issued when the structure is killed. There's really no point in not giving a team that information, it will either lead to constant checks ("Can I evolve?", "Can I place an egg?", "Does that structure still have power?") or to frustration. Losing the main buildable is critical enough so I no point in keeping that information secret. Giving a warning on the first scratch was often annoying in pubs and misleading in scrims. It would also be unintuitive if it was a bad thing to hit the main buildable with a graze shot.
 \item The reactor and repeater inform their team when a structure in their range dies. This allows a sneaky attacker to kill atleast one structure but allows the humans to react before the match gets decided by one lucky attack without any struggle. Giving the repeater the same ability ensures some protection for bigger forwards. (Story explaination: Reactor and repeater notice the voltage peak when the structure stops drawing power, similiar to an RFID reader.)
 \item The overmind informs the aliens when a structure in its range dies. Aliens don't get a message for structures that die in forwards though. The aliens greater mobility and ability to spam structures should be compensated by a slightly higher risk of losing control.
 \item All warnings contain information about the location of the event (room name; in order to increase coordination in public games).
@@ -234,7 +238,7 @@ Anything that isn't targeted at a more specific balance problem goes in here.
 
 Humans without a helmet can be locked into their base by dragoons and they will often find it a waste of credits to buy stronger weapons if they are facing enemies that can kill them with a single hit. On the other hand, the helmet is too strong against dretches to be available early on. The light armor serves as a protection against unexperienced players who pounce with the goon or hit the legs with the dretch but its value gets increasingly smaller when the enemy is more skilled and aims for the head.
 
-\paragraph{\pending Armor reform}
+\paragraph{\completed Armor reform}
 
 Helmet and light armor models are used for a single item, also called "light armor". The new light armor's body protection is slightly lower than that of the old light armor, the head protection is lower than that of the old helmet: The carrier survives a single goon headchomp. The price of the new light armor is either equal to or slightly higher than the dretch credit value, so something around 200 credits. (I would set it to 200 for now and consider raising the dretch value to 200 when it gets the pounce ability.) A "medium armor" is added. The head protection level is roughly that of the old helmet, the body protection is slightly higher than that of the old light armor. The price is between that of the light armor and the battlesuit, so something around 300 credits. The battlesuit remains unchanged in ability and price and fills the niche of a heavy armor. Thanks to ddos for the idea.
 
@@ -264,12 +268,12 @@ Compared to the arsenal of the human team, the degree of diversity on alien side
 
 \subsubsection{\target Flying class}
 
-\paragraph{\draft Vulture}
+\paragraph{\draft Shrike}
 \label{vulture}
 
 \subsubsection{\target Basilisk redesign}
 
-\paragraph{\draft "Paralisk" (Codename)}
+\paragraph{\draft Basilisk}
 \label{paralisk}
 
 \subsubsection{\target Suicide class}
@@ -277,7 +281,7 @@ Compared to the arsenal of the human team, the degree of diversity on alien side
 
 A suicide class was an often requested feature. Looking at the way how players use the human grenade in kamikaze manner, it seems like such an ability could be a lot of fun for the aliens, too. While we shouldn't promote mindless attacks that convert personal credits into reliable damage, we can still have this ability if it's either expensive and comes with a risk of not hitting its target (similiar to the grenade) or has a low intensity that limits it to a support attack (less fun but easier to balance).
 
-See \ref{flexible-upgrades} for a solution.
+\ref{flexible-upgrades} for a solution.
 
 \subsection{\goal Alien class structure}
 
