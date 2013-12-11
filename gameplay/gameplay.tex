@@ -4,8 +4,8 @@
 \usepackage{color}
 
 \title{Unvanquished Gameplay Roadmap}
-\author{Viech}
-\date{\today}
+\author{Unvanquished Development}
+\date{\input{|"./generate_version.sh"}}
 
 \newcommand{\changefont}[3]
 {
@@ -45,6 +45,10 @@
 
 \maketitle
 \tableofcontents
+
+\section{ChangeLog}
+
+\input{|"./generate_changelog.sh"}
 
 \section{Introduction}
 
