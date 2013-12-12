@@ -91,7 +91,7 @@ In the original confidence design, rewards, half life time and stage thresholds 
 
 \paragraph{\rejected Fixed thresholds, growing reference level}
 
-Confidence thresholds are fixed numbers but the reference level for the exponential function isn't constantly zero anymore but a linear function of the time and player count. Given the fact that teams usually earn confidence instead of losing it, it serves as a soft minimum for confidence at a given time. The confidence half life time can now be used to fine-tune the stability of the system: A low value increases the importance of time and decreases the impact of a teams actions. A higher value allows the teams to reach higher stages more quickly but won't compensate them if they don't manage to earn confidence.
+\ldots
 
 \subparagraph{\amendment Status change to \rejected}
 
@@ -102,41 +102,12 @@ We decided to keep thresholds fixed and the decay mechanic simple. Most of the c
 Confidence is supposed to measure the pace of a team and reward active gameplay. It should support a teams momentum but it should also favor a team that manages to push a stronger enemy back. Unfortunately, the amount of scenarios that require a special treatment for this to work properly is immense.
 
 \paragraph{\rejected Detailed visualization}
-\label{detailed-visualization}
 
-Confidence rewards already create the impression of an arcade style score or RPG like experience system. While these are not our main genres, I no point in ignoring their approaches on principle alone (it's not like we'd need to obscure the screen with flashing combo modifiers).
-
-Confidence events are displayed at the left side of the screen. Each has a container of its own, like this:
-\\\\
-\begin{tabular}{|l|}
-\hline
-+15 Destroying defense structure\\
-Base value: 10\\
-Pushing back: +5\\
-72\% personal involvement\\
-\hline
-\end{tabular}
-\\\\\\
-A number of these entities can be displayed below each other, they will shift away upwards after a short time or if a new event arrives while the stack is full. Lines such as the third one represent modifiers of a confidence event. Examples:
-\\\\
-\begin{tabular}{l|l|l}
-	Name         & Value    & Description\\
-	\hline
-	Pushing back & Positive & The team didn't generate aggressive confidence for a while\\
-	Early strike & Negative & Killing structures early in the game\\
-	Undefended   & Negative & Killing undefended structures\\
-	Spamming     & Negative & Building in an area with a lot of structures\\
-	Risky        & Positive & Building outside the friendly base\\
-	Bold         & Positive & Building close to the enemy base\\
-	Defending    & Negative & Killing an enemy inside the friendly base\\
-	Attacking    & Positive & Killing an enemy inside the enemy base\\
-\end{tabular}
-\\\\\\
-These modifiers are either fixed boni or actual modifiers applied to the base value. Only the resulting deltas are displayed in either case. Personal involvement is the amount of work that has been done by the player that receives the message. Values below a threshold don't result in a message.
+\ldots
 
 \subparagraph{\amendment Status change to \rejected}
 
-Instead of keeping the confidence modifiers simple and showing them to players, we decided to make them as complex as necessary to be intuitive. We will hide the complexity behind a graphical display (\ref{intuitive-visualization}). The name of \ref{detailed-visualization} has been changed from "Improved visualization" to "Detailed visualization".
+Instead of keeping the confidence modifiers simple and showing them to players, we decided to make them as complex as necessary to be intuitive. We will hide the complexity behind a graphical display (\ref{intuitive-visualization}).
 
 \paragraph{\completed Intuitive visualization}
 \label{intuitive-visualization}
@@ -330,8 +301,8 @@ Compared to the arsenal of the human team, the degree of diversity on alien side
 
 \subsubsection{\target Basilisk redesign}
 
-\paragraph{\draft Basilisk}
-\label{paralisk}
+\paragraph{\draft Mantis}
+\label{mantis}
 
 \subsubsection{\target Suicide class}
 \label{suicide-class}
@@ -357,7 +328,7 @@ Here are the perks that I'd implement for a start:
 
 \begin{itemize}
 \item Strength. Works like evolving into an advanced class but without giving a special ability. Strength can be applied to all classes and combined with any other perk and will increase values such as health, damage, jump magnitude and attack rate. However, strength will increase the hitbox and model size of an alien. It gets unlocked early and is cheap (one evo for most classes).
-\item Electricity. Adds a low range ability that is most efficient for attacking groups of humans or buildables. The marauder will get its zap attack. The basilisk will get the power-drawing bomb that I planned for its advanced version (see \ref{paralisk}).
+\item Electricity. Adds a low range ability that is most efficient for attacking groups of humans or buildables. The marauder will get its zap attack. The basilisk will get the power-drawing bomb that I planned for its advanced version (see \ref{mantis}).
 \item Spikes. Adds a directed, ranged attack with a low or no area of effect, such as the snipe attack of the old advanced goon.
 \item Fragmentation. Adds an undirected or imprecise attack with high damage output and risk of hurting teammates or friendly structures. The dretch gets a suicide attack (cf. \ref{suicide-class}).
 \end{itemize}
