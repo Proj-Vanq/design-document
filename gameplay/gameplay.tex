@@ -63,6 +63,7 @@ Solutions can have one of the following tags:
 \section{Core gameplay goals}
 
 \subsection{\goal Team progress}
+\label{team-progress}
 
 Team stages in Tremulous served the purpose of giving a match a number of phases. At the beginning of a match, the ability to extend the weak default base was guaranteed by the fact that access to strong weapons was restricted, even if individual players managed to gain a good amount of personal resources quickly. Higher stages offered new guns and shifted the gameplay from building towards destruction, even though stronger defense buildables dampened the effect a bit.
 
@@ -152,6 +153,7 @@ Confidence rules are reworked to reward basic notions of progress (building, des
 The precise ruleset will be developed during implementation and testing.
 
 \subsection{\goal Stability}
+\label{stability}
 
 Ideally a match is stable in the beginning but gets increasingly instable over the course of time, so that equally strong teams are having long lasting and close matches that lead to a winner eventually.
 
@@ -169,6 +171,57 @@ In relation to the number of buildables, big bases are easier to destroy than sm
 \item Some weapons come with an area of effect and can do more damage when used against a number of close structures. Weapons that are unlocked later in the game have a higher affinity for this feature.
 \item Effects that slow down enemies or reduce their ability to fight in a similiar way don't stack.
 \item Healing effects and buffs provided by structures to either friendly players or structures don't stack.
+\end{itemize}
+
+\subsection{\goal Match phases}
+
+Building upon \ref{team-progress} and \ref{stability}, it seems partitioning the ideal match into a sequence of phases can serve as a potent guideline for further design.
+
+\subsubsection{\abstrac Phase models}
+
+\paragraph{\undecided 3x2 phase model}
+
+\begin{itemize}
+	\item Expansion phase \\\\
+		Length estimate: Five minutes. \\
+		Momentum generation: Building, combat. \\
+		\begin{itemize}
+		\item Exploration phase \\\\
+			Teams start with a weapon arsenal that is well capable of fighting skirmishes but lacks efficiency against buildables. Main bases generally have enough protection so they can be left for forward building or a move to a new position. Newly created bases develope an appropriate defense quickly and can pay their own cost given that they are at a certain distance from each other. While armed teams can either escort a builder or try to deny the enemy from securing a position, attacks on the enemy main base are inefficient regardless of the amount of personal resources since the necessary protection isn't unlocked yet. \\\\
+			Typical weapons: Shotgun, Marauder. \\
+			Typical defenses: Turret, Gas Flower. \\
+		\item Delineation phase \\\\
+			A new wave of defense structures allows teams to shield off their bases efficiently against enemies with inexpensive equipment. With the introduction of light armor and more resistant alien classes, attacking bases comes into sight anyway but the price for a succesful attack is high as defense structures must be tackled in a non-optimal manner. Skirmishes are fought to generate personal resources but those are mostly spent to gain a combat advantage since destruction isn't feasible yet. Further expansion is possible, as long as the area isn't under enemy control and proper defense is organized. \\\\
+			Momentum advantage: The team that reaches this stage first has the option to either deny the enemy team personal resources, securing their own expansion and ensuring first strike capability when entering the next phase or they can take their chance by focusing their current personal resources on one strike against an enemy forward, potentially destroying it at the cost of being in the defensive position when the next phase is reached. \\\\
+			Typical weapons: Light Armour, Dragoon. \\
+			Typical defenses: Rocket Pod, Spiker. \\
+		\end{itemize}
+	\item Engagement phase \\\\
+		Length estimate: Ten to twenty minutes. \\
+		Momentum generation: Combat, destruction. \\
+		\begin{itemize}
+		\item Pressure phase \\\\
+			Weapons that can be used without constant exposure to defense systems are introduced, as well as weapons that can harm multiple structures at once. Perimeter defenses can now be targeted at an acceptable risk and with good gain and previous strongholds start showing weaknesses. Deliberate skirmishes happen whenever players lack the resources for an assault but since the new area weapons are capable of generating a certain amount of personal resources during base attacks, more time can be spent with the latter. Map control gains importance beyond base lines and teams try to push combat into enemy territory. \\\\
+			Typical weapons: Firebomb, alien area attacks, portable ammo and health supplies. \\
+		\item Strike phase \\\\
+			With the availability of stronger armor and anti-structure strike weapons, remaining perimeter defenses can be circumvented to target critical infrastructure behind enemy lines and inside their main base. Forwards serve as a platform to launch these attacks from and recreational structures become a more vital part of them. However, the wave of weapons is countered by a new wave of defense structures that are capable of making this kind of attack harder, especially for individual attackers. \\\\
+			Momentum advantage: The team that reaches this phase first gets the ability to strike the enemy bases with individual attackers and has a timeframe to make sure the own bases don't share this fate. \\\\
+			Typical weapons: Medium Armour, Grenade, long ranged alien attacks. \\
+			Typical defenses: Trapper, structure repair buffs. \\
+		\end{itemize}
+	\item Contraction phase \\\\
+		Length estimate: Less than ten minutes. \\
+		Momentum generation: Destruction. \\
+		\begin{itemize}
+		\item Retreat phase \\\\
+			The availability of heavy armor and the loss of perimeter defenses make the upkeep of forward bases infeasable. The low base mine rate paired with the collapse of mining sites doesn't allow another expansion or base move and the building resources remaining after strike phase related repairs are used to strengthen the core of the main base. New defense structures can repel a low number of attacks due to high damage output against a small number of enemies but have a low survivability and are relatively expensive. \\\\
+			Momentum advantage: The team that reaches this stage first gets to keep the remainders of their forwards for a while by pushing enemy players with weaker armor back. The stronger armor and remaining recreational platforms allow them to launch attacks at a relatively low resource cost. \\\\
+			Typical weapons: Heavy Armour, High HP alien classes. \\
+			Typical defenses: Hive. \\
+		\item Annihilation phase \\\\
+			This phase is entered when both teams have about equal strength or played either disorganized or defensively. It adds weapons that can destroy significant parts of a base as soon as there's a clear line of sight, setting a strong focus on aggressive gameplay and giving the match another chance to end with a winner. Weapons are equally devasting against players, so the best bet in defense is meeting the enemy far away from the friendly base so multiple encounters are possible. \\\\
+			Typical weapons: Lucifer cannon. \\
+		\end{itemize}
 \end{itemize}
 
 \section{Core gameplay goals for scrims}
